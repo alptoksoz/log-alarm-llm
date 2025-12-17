@@ -6,6 +6,9 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def resolve_env_vars(value: Any) -> Any:
