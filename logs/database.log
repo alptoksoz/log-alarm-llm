@@ -1,0 +1,21 @@
+2025-12-16 10:00:01 [INFO] MySQL Server 8.0.32 started
+2025-12-16 10:00:02 [INFO] InnoDB: Buffer pool(s) load completed
+2025-12-16 10:00:03 [INFO] Ready for connections. Version: '8.0.32' socket: '/var/run/mysqld/mysqld.sock'
+2025-12-16 10:01:00 [INFO] Connection from 192.168.1.20 (webapp@production)
+2025-12-16 10:01:30 [INFO] Query completed: SELECT * FROM users WHERE id=1234 (0.002s)
+2025-12-16 10:02:00 [INFO] Query completed: INSERT INTO orders VALUES (...) (0.005s)
+2025-12-16 10:03:00 [WARNING] Query took 45.234s: SELECT * FROM orders o JOIN order_items oi ON o.id=oi.order_id WHERE o.status='pending' AND o.created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)
+2025-12-16 10:04:00 [INFO] Connection from 192.168.1.21 (reports@production)
+2025-12-16 10:05:00 [WARNING] Too many connections (max: 150, current: 145)
+2025-12-16 10:05:30 [ERROR] Too many connections (max: 150, current: 150)
+2025-12-16 10:06:00 [ERROR] Aborted connection 12345 to db: 'production' user: 'webapp' host: '192.168.1.20' (Got timeout reading communication packets)
+2025-12-16 10:07:00 [INFO] Query completed: SELECT COUNT(*) FROM products (0.001s)
+2025-12-16 10:08:00 [WARNING] Deadlock found when trying to get lock; try restarting transaction
+2025-12-16 10:08:01 [INFO] Transaction rolled back due to deadlock
+2025-12-16 10:09:00 [INFO] Query completed: UPDATE inventory SET quantity=quantity-1 WHERE product_id=5678 (0.003s)
+2025-12-16 10:10:00 [INFO] Slow query log: 5 queries exceeded 1s threshold in last hour
+2025-12-16 10:11:00 [INFO] Connection closed: webapp@192.168.1.20
+2025-12-16 10:12:00 [INFO] Binary log rotation: mysql-bin.000045
+2025-12-16 10:13:00 [WARNING] IP address '192.168.1.99' could not be resolved: Name or service not known
+2025-12-16 10:14:00 [INFO] Query completed: SELECT * FROM products WHERE category='electronics' (0.015s)
+2025-12-16 10:15:00 [INFO] Replication: Slave SQL thread initialized, starting replication

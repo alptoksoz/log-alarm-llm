@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Alarm LLM - AI-Powered Log Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a1f26;
+            --bg-card: #1e2530;
+            --bg-hover: #252d3a;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --accent-subtle: rgba(59, 130, 246, 0.1);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #2d3748;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #22c55e;
+            --info: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 60px;
+            padding: 60px 80px;
+            min-height: 320px;
+            align-items: center;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-content p {
+            font-size: 1.125rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            max-width: 520px;
+            line-height: 1.7;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+        }
+
+        .stat-item {
+            text-align: left;
+        }
+
+        .stat-value {
+            font-size: 2.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-svg {
+            width: 100%;
+            max-width: 380px;
+            height: auto;
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 32px;
+            padding: 32px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            height: fit-content;
+            border: 1px solid var(--border);
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .source-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .source-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .source-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--border);
+        }
+
+        .source-item.active {
+            background: var(--accent-subtle);
+            border-color: var(--accent);
+        }
+
+        .source-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .source-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .source-icon.webserver { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+        .source-icon.system { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
+        .source-icon.application { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+
+        .source-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .source-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+
+        .source-path {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .source-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .source-status.active { background: var(--success); box-shadow: 0 0 8px var(--success); }
+        .source-status.inactive { background: var(--danger); }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-primary);
+        }
+
+        .card-title-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--accent-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+
+        .card-title-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        select {
+            padding: 10px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        select:hover, select:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-primary:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Log Viewer */
+        .log-viewer {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.8;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        .log-viewer::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .log-viewer::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .log-viewer::-webkit-scrollbar-thumb {
+            background: var(--text-muted);
+            border-radius: 3px;
+        }
+
+        .log-viewer::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        .log-line {
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 2px;
+            transition: background 0.15s ease;
+        }
+
+        .log-line:hover {
+            background: var(--bg-hover);
+        }
+
+        .line-number {
+            color: var(--text-muted);
+            margin-right: 20px;
+            user-select: none;
+            font-weight: 500;
+            min-width: 36px;
+            display: inline-block;
+            text-align: right;
+        }
+
+        /* Alerts */
+        .alerts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .alerts-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .alerts-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .alerts-container::-webkit-scrollbar-thumb {
+            background: var(--text-muted);
+            border-radius: 3px;
+        }
+
+        .alert-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 3px solid;
+            transition: all 0.2s ease;
+        }
+
+        .alert-card:hover {
+            background: var(--bg-hover);
+        }
+
+        .alert-card.critical { border-color: var(--danger); }
+        .alert-card.error { border-color: var(--danger); }
+        .alert-card.warning { border-color: var(--warning); }
+        .alert-card.info { border-color: var(--info); }
+
+        .alert-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .alert-severity {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .alert-severity.critical { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .alert-severity.error { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .alert-severity.warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .alert-severity.info { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+
+        .alert-source {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: var(--bg-hover);
+            color: var(--text-secondary);
+        }
+
+        .alert-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        .alert-summary {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .alert-details {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .alert-log {
+            font-family: 'SF Mono', monospace;
+            font-size: 0.75rem;
+            background: var(--bg-primary);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            word-break: break-all;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .alert-recommendation {
+            font-size: 0.85rem;
+            color: var(--success);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .alert-recommendation svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            opacity: 0.4;
+            color: var(--text-muted);
+        }
+
+        .empty-state p {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding: 40px;
+                gap: 40px;
+            }
+
+            .hero-content p {
+                max-width: 100%;
+                margin: 0 auto 32px;
+            }
+
+            .hero-stats {
+                justify-content: center;
+            }
+
+            .stat-item {
+                text-align: center;
+            }
+
+            .hero-visual {
+                display: none;
+            }
+
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                order: -1;
+            }
+
+            .source-list {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 30px 20px;
+            }
+
+            .hero-content h1 {
+                font-size: 2.25rem;
+            }
+
+            .hero-stats {
+                gap: 24px;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .controls select,
+            .controls .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>AI-Powered<br>Log Analysis</h1>
+            <p>Real-time threat detection and anomaly identification using advanced LLM technology. Protect your systems with intelligent monitoring.</p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-sources">0</div>
+                    <div class="stat-label">Log Sources</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-alerts">0</div>
+                    <div class="stat-label">Alerts</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-model">-</div>
+                    <div class="stat-label">AI Model</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <svg class="hero-svg" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Shield Base -->
+                <path d="M200 30L340 80V160C340 220 280 270 200 290C120 270 60 220 60 160V80L200 30Z"
+                      fill="url(#shieldGradient)" stroke="#3b82f6" stroke-width="2"/>
+
+                <!-- Inner Shield -->
+                <path d="M200 50L310 90V155C310 205 260 245 200 262C140 245 90 205 90 155V90L200 50Z"
+                      fill="#0f1419" stroke="#3b82f6" stroke-width="1" opacity="0.5"/>
+
+                <!-- Central Circle -->
+                <circle cx="200" cy="150" r="50" fill="none" stroke="#3b82f6" stroke-width="2" opacity="0.8"/>
+                <circle cx="200" cy="150" r="35" fill="none" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
+                <circle cx="200" cy="150" r="20" fill="#3b82f6" opacity="0.2"/>
+
+                <!-- Connection Lines -->
+                <line x1="200" y1="100" x2="200" y2="70" stroke="#3b82f6" stroke-width="2" opacity="0.5"/>
+                <line x1="200" y1="200" x2="200" y2="230" stroke="#3b82f6" stroke-width="2" opacity="0.5"/>
+                <line x1="150" y1="150" x2="120" y2="150" stroke="#3b82f6" stroke-width="2" opacity="0.5"/>
+                <line x1="250" y1="150" x2="280" y2="150" stroke="#3b82f6" stroke-width="2" opacity="0.5"/>
+
+                <!-- Pulse Animation -->
+                <circle cx="200" cy="150" r="60" fill="none" stroke="#3b82f6" stroke-width="1" opacity="0.3">
+                    <animate attributeName="r" values="60;80;60" dur="2s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite"/>
+                </circle>
+
+                <!-- Log Lines -->
+                <rect x="160" y="135" width="80" height="5" rx="2.5" fill="#3b82f6" opacity="0.7"/>
+                <rect x="170" y="146" width="60" height="5" rx="2.5" fill="#3b82f6" opacity="0.5"/>
+                <rect x="165" y="157" width="70" height="5" rx="2.5" fill="#3b82f6" opacity="0.3"/>
+
+                <!-- Checkmark -->
+                <path d="M185 150L195 160L215 140" stroke="#22c55e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+                <defs>
+                    <linearGradient id="shieldGradient" x1="200" y1="30" x2="200" y2="290" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#1e2530"/>
+                        <stop offset="100%" stop-color="#0f1419"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3 class="sidebar-title">Log Sources</h3>
+            <ul class="source-list" id="source-list">
+                <!-- Dynamic content -->
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Log Viewer Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span class="card-title-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10 9 9 9 8 9"/>
+                            </svg>
+                        </span>
+                        Log Viewer
+                    </h2>
+                    <div class="controls">
+                        <select id="line-count">
+                            <option value="25">Last 25 lines</option>
+                            <option value="50" selected>Last 50 lines</option>
+                            <option value="100">Last 100 lines</option>
+                        </select>
+                        <button class="btn btn-primary" id="analyze-btn" onclick="analyzeSelected()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polygon points="10 8 16 12 10 16 10 8"/>
+                            </svg>
+                            Analyze with AI
+                        </button>
+                    </div>
+                </div>
+                <div class="log-viewer" id="log-viewer">
+                    <div class="empty-state">
+                        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                        </svg>
+                        <p>Select a log source from the sidebar to view logs</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span class="card-title-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                <line x1="12" y1="9" x2="12" y2="13"/>
+                                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                            </svg>
+                        </span>
+                        Security Alerts
+                    </h2>
+                    <button class="btn btn-danger" onclick="clearHistory()">Clear All</button>
+                </div>
+                <div class="alerts-container" id="alerts-container">
+                    <div class="empty-state">
+                        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                        <p>No security alerts detected</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let selectedSource = null;
+        const API_BASE = '';
+
+        // SVG Icons
+        const icons = {
+            system: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>`,
+            webserver: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>`,
+            application: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+                <line x1="9" y1="21" x2="9" y2="9"/>
+            </svg>`,
+            default: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+            </svg>`,
+            folder: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+            </svg>`,
+            folderEmpty: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h6a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>
+            </svg>`,
+            check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>`,
+            error: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>`,
+            lightbulb: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="9" y1="18" x2="15" y2="18"/>
+                <line x1="10" y1="22" x2="14" y2="22"/>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0018 8 6 6 0 006 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 018.91 14"/>
+            </svg>`
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStatus();
+            loadSources();
+            loadAlertHistory();
+        });
+
+        async function loadStatus() {
+            try {
+                const res = await fetch(`${API_BASE}/api/status`);
+                const data = await res.json();
+
+                document.getElementById('stat-sources').textContent = data.sources_count;
+                document.getElementById('stat-alerts').textContent = data.alert_history_count;
+                document.getElementById('stat-model').textContent = data.model.replace('gpt-', '').toUpperCase();
+            } catch (e) {
+                console.error('Status load failed:', e);
+            }
+        }
+
+        async function loadSources() {
+            try {
+                const res = await fetch(`${API_BASE}/api/sources`);
+                const data = await res.json();
+
+                const list = document.getElementById('source-list');
+                list.innerHTML = data.sources.map(s => `
+                    <li class="source-item" onclick="selectSource('${s.name}')" id="source-${s.name}">
+                        <div class="source-icon ${s.type}">${icons[s.type] || icons.default}</div>
+                        <div class="source-info">
+                            <div class="source-name">${s.name}</div>
+                            <div class="source-path">${s.path}</div>
+                        </div>
+                        <div class="source-status ${s.exists ? 'active' : 'inactive'}"></div>
+                    </li>
+                `).join('');
+            } catch (e) {
+                console.error('Sources load failed:', e);
+            }
+        }
+
+        async function selectSource(name) {
+            selectedSource = name;
+
+            document.querySelectorAll('.source-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`source-${name}`).classList.add('active');
+
+            await loadLogs(name);
+        }
+
+        async function loadLogs(name) {
+            const viewer = document.getElementById('log-viewer');
+            const lineCount = document.getElementById('line-count').value;
+
+            viewer.innerHTML = '<div class="empty-state"><div class="spinner"></div></div>';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/logs/${name}?lines=${lineCount}`);
+
+                if (!res.ok) {
+                    throw new Error('Failed to read log file');
+                }
+
+                const data = await res.json();
+
+                if (data.lines.length === 0) {
+                    viewer.innerHTML = `
+                        <div class="empty-state">
+                            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h6a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>
+                            </svg>
+                            <p>No logs found in this file</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                viewer.innerHTML = data.lines.map(l => `
+                    <div class="log-line">
+                        <span class="line-number">${l.line_number}</span>${escapeHtml(l.line)}
+                    </div>
+                `).join('');
+
+                viewer.scrollTop = viewer.scrollHeight;
+
+            } catch (e) {
+                viewer.innerHTML = `
+                    <div class="empty-state">
+                        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                        <p>${e.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function analyzeSelected() {
+            const btn = document.getElementById('analyze-btn');
+            const lineCount = document.getElementById('line-count').value;
+
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner"></div> Analyzing...';
+
+            try {
+                const body = {
+                    line_count: parseInt(lineCount)
+                };
+
+                if (selectedSource) {
+                    body.source_name = selectedSource;
+                }
+
+                const res = await fetch(`${API_BASE}/api/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                const data = await res.json();
+
+                await loadAlertHistory();
+                await loadStatus();
+
+                if (data.alert_count === 0) {
+                    showNotification(`Analyzed ${data.analyzed_lines} lines - No issues detected`, 'success');
+                } else {
+                    showNotification(`Found ${data.alert_count} security alerts`, 'warning');
+                }
+
+            } catch (e) {
+                showNotification('Analysis error: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polygon points="10 8 16 12 10 16 10 8"/>
+                    </svg>
+                    Analyze with AI
+                `;
+            }
+        }
+
+        function showNotification(message, type) {
+            // Simple alert for now - could be replaced with toast notification
+            alert(message);
+        }
+
+        async function loadAlertHistory() {
+            try {
+                const res = await fetch(`${API_BASE}/api/alerts/history?limit=50`);
+                const data = await res.json();
+
+                const container = document.getElementById('alerts-container');
+
+                if (data.alerts.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                            <p>No security alerts detected</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = data.alerts.map(a => `
+                    <div class="alert-card ${a.severity}">
+                        <div class="alert-header">
+                            <span class="alert-severity ${a.severity}">${a.severity}</span>
+                            <span class="alert-source">${a.source_name || 'unknown'}</span>
+                            <span class="alert-time">${formatTime(a.timestamp)}</span>
+                        </div>
+                        <div class="alert-summary">${escapeHtml(a.summary)}</div>
+                        <div class="alert-details">${escapeHtml(a.details)}</div>
+                        <div class="alert-log">${escapeHtml(a.log_line)}</div>
+                        <div class="alert-recommendation">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="9" y1="18" x2="15" y2="18"/>
+                                <line x1="10" y1="22" x2="14" y2="22"/>
+                                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0018 8 6 6 0 006 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 018.91 14"/>
+                            </svg>
+                            ${escapeHtml(a.recommendation)}
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (e) {
+                console.error('Alert history load failed:', e);
+            }
+        }
+
+        async function clearHistory() {
+            if (!confirm('Clear all alert history?')) return;
+
+            try {
+                await fetch(`${API_BASE}/api/alerts/history`, { method: 'DELETE' });
+                await loadAlertHistory();
+                await loadStatus();
+            } catch (e) {
+                alert('Failed to clear history: ' + e.message);
+            }
+        }
+
+        function formatTime(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.getElementById('line-count').addEventListener('change', () => {
+            if (selectedSource) {
+                loadLogs(selectedSource);
+            }
+        });
+
+        setInterval(() => {
+            loadStatus();
+            loadAlertHistory();
+        }, 30000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+Dec 16 10:00:01 server sshd[1234]: Accepted publickey for deploy from 192.168.1.10 port 52413 ssh2
+Dec 16 10:00:30 server sshd[1235]: Accepted publickey for admin from 192.168.1.11 port 52414 ssh2
+Dec 16 10:01:00 server sudo: deploy : TTY=pts/0 ; PWD=/home/deploy ; USER=root ; COMMAND=/bin/systemctl restart nginx
+Dec 16 10:02:00 server sshd[2001]: Failed password for root from 45.33.32.156 port 44231 ssh2
+Dec 16 10:02:02 server sshd[2002]: Failed password for root from 45.33.32.156 port 44232 ssh2
+Dec 16 10:02:04 server sshd[2003]: Failed password for root from 45.33.32.156 port 44233 ssh2
+Dec 16 10:02:06 server sshd[2004]: Failed password for root from 45.33.32.156 port 44234 ssh2
+Dec 16 10:02:08 server sshd[2005]: Failed password for root from 45.33.32.156 port 44235 ssh2
+Dec 16 10:02:10 server sshd[2006]: Failed password for root from 45.33.32.156 port 44236 ssh2
+Dec 16 10:02:12 server sshd[2007]: Failed password for root from 45.33.32.156 port 44237 ssh2
+Dec 16 10:02:14 server sshd[2008]: Failed password for root from 45.33.32.156 port 44238 ssh2
+Dec 16 10:02:16 server sshd[2009]: Failed password for admin from 45.33.32.156 port 44239 ssh2
+Dec 16 10:02:18 server sshd[2010]: Failed password for admin from 45.33.32.156 port 44240 ssh2
+Dec 16 10:03:00 server sshd[1236]: Accepted publickey for developer from 192.168.1.12 port 52415 ssh2
+Dec 16 10:04:00 server sudo: developer : TTY=pts/1 ; PWD=/var/www ; USER=www-data ; COMMAND=/bin/cat access.log
+Dec 16 10:05:00 server sshd[3001]: Accepted password for root from 203.0.113.50 port 22 ssh2
+Dec 16 10:05:30 server sudo: unknown user 'hacker' attempted to run sudo
+Dec 16 10:06:00 server sshd[1237]: Disconnected from 192.168.1.10 port 52413
+Dec 16 10:07:00 server sshd[4001]: Did not receive identification string from 185.143.223.47 port 55123
+Dec 16 10:07:30 server sshd[4002]: Invalid user oracle from 185.143.223.47 port 55124
+Dec 16 10:07:32 server sshd[4003]: Invalid user test from 185.143.223.47 port 55125
+Dec 16 10:07:34 server sshd[4004]: Invalid user guest from 185.143.223.47 port 55126
+Dec 16 10:08:00 server sshd[1238]: Accepted publickey for deploy from 192.168.1.10 port 52416 ssh2
+Dec 16 10:09:00 server sudo: deploy : TTY=pts/0 ; PWD=/home/deploy ; USER=root ; COMMAND=/bin/cat /etc/shadow

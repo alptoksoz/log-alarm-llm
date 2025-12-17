@@ -1,0 +1,95 @@
+# Log Alarm LLM Configuration
+
+# OpenAI API ayarları
+openai:
+  api_key: "${OPENAI_API_KEY}"  # Env variable'dan alınır
+  model: "gpt-4o-mini"  # Maliyet için gpt-4o-mini önerilir
+  max_tokens: 2000
+
+# İzlenecek log dosyaları
+log_sources:
+  # Web sunucu logları - SQL injection, XSS, directory traversal saldırıları var
+  - name: "nginx"
+    path: "./logs/nginx_access.log"
+    type: "webserver"
+    enabled: true
+
+  # Authentication logları - brute force saldırısı var
+  - name: "auth"
+    path: "./logs/auth.log"
+    type: "system"
+    enabled: true
+
+  # Temiz uygulama logları - sorunsuz, alarm olmamalı
+  - name: "app_clean"
+    path: "./logs/app_clean.log"
+    type: "application"
+    enabled: true
+
+  # Sistem logları - OOM, disk, CPU, SYN flood sorunları var
+  - name: "syslog"
+    path: "./logs/syslog"
+    type: "system"
+    enabled: true
+
+  # Veritabanı logları - performans sorunları var
+  - name: "database"
+    path: "./logs/database.log"
+    type: "application"
+    enabled: true
+
+  # Karışık demo - tüm tehditler bir arada
+  - name: "demo"
+    path: "./logs/demo.log"
+    type: "application"
+    enabled: true
+
+# Analiz ayarları
+analysis:
+  batch_size: 50  # Kaç satır log birden analiz edilsin
+  interval_seconds: 60  # Kaç saniyede bir kontrol
+  severity_threshold: "info"  # LLM'in tüm bulgularını göster
+
+# Alarm ayarları
+alerting:
+  console:
+    enabled: true
+    colored: true
+
+  email:
+    enabled: false
+    smtp_host: "smtp.gmail.com"
+    smtp_port: 587
+    username: "your-email@gmail.com"
+    password: "${EMAIL_PASSWORD}"  # Env variable
+    from_addr: "your-email@gmail.com"
+    to_addrs:
+      - "admin@example.com"
+
+# LLM Prompt şablonu
+prompt_template: |
+  Sen bir güvenlik ve sistem analisti gibi davran. Aşağıdaki log satırlarını analiz et.
+
+  Her satır için:
+  1. Güvenlik tehdidi veya anomali var mı?
+  2. Sistem hatası veya performans sorunu var mı?
+  3. Acil müdahale gerektirir mi?
+
+  Sadece önemli bulguları raporla. Normal aktiviteleri atla.
+
+  Çıktı formatı (JSON):
+  {{
+    "alerts": [
+      {{
+        "severity": "critical|error|warning|info",
+        "summary": "Kısa açıklama",
+        "details": "Detaylı bilgi",
+        "log_line": "İlgili log satırı",
+        "recommendation": "Önerilen aksiyon"
+      }}
+    ],
+    "has_issues": true/false
+  }}
+
+  Log satırları:
+  {logs}
